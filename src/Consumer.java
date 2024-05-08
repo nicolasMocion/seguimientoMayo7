@@ -1,6 +1,8 @@
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Consumer extends Thread {
+
     private Buffer buffer;
     String word;
 
@@ -9,6 +11,8 @@ public class Consumer extends Thread {
     public char[] wordA;
 
     boolean isNotFull = true;
+
+    Persistencia persistencia;
 
     private ArrayList<Character> aux = new ArrayList<>();
 
@@ -44,6 +48,11 @@ public class Consumer extends Thread {
                 }
                 else{
                     aux.add(c);
+                    try {
+                        Hipervisor.guardarLetraSobrante(aux);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
@@ -58,6 +67,9 @@ public class Consumer extends Thread {
         }
 
         System.out.println("Done");
+        Hipervisor.printArray(wordA);
+        Hipervisor.printArrayList(aux);
+        Persistencia.guardarRegistroLog("Palabra completada!", 1, "Notificación ","src/LogApp.txt");
 
     }
 
